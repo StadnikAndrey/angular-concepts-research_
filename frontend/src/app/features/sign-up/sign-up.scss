@@ -1,0 +1,60 @@
+.sign_up {
+    width: 100vw;
+    height: 100vh;
+    background-color: #eff2fb;
+
+    &__app-name {
+        margin-bottom: 50px;
+    }
+
+    &__inner {
+        max-width: 300px;
+        margin: 0 auto;
+        padding-top: 200px;
+    }
+
+    &__title {
+        margin-bottom: 15px;
+        font-size: 19px;
+        font-weight: 700;
+    }
+
+    &__form {
+        margin-bottom: 25px;
+    }
+    &__form-row {
+        margin-bottom: 15px;
+    }
+
+    &__form-input {
+        display: block;
+        width: 100%;
+        border: none;
+        outline: none;
+        padding: 8px 20px;
+        border-radius: 19px;
+
+        &::placeholder {
+            font-size: 14px;
+            color: #939393;
+        }
+    }
+
+    &__form-btn {
+        width: 100%;
+        padding: 8px;
+        border-radius: 19px;
+        color: #fff;
+        background: linear-gradient(90deg, oklch(0.5318 0.28 296.97) 0%, oklch(0.5101 0.274 263.83) 100%);
+    }
+
+    &__menu-link {
+        display: block;
+        max-width: fit-content;
+        font-size: 15px;
+        font-weight: 300;
+        text-decoration: underline dotted;
+        text-transform: lowercase;
+        margin-bottom: 10px;
+    }
+}

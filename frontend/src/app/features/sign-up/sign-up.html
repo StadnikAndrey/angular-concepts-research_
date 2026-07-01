@@ -1,0 +1,34 @@
+<div class="sign_up">
+    <div class="sign_up__inner">
+        <h1 class="sign_up__app-name">Angular concepts research</h1>
+        <h2 class="sign_up__title">Sign up</h2>
+        <form class="sign_up__form" [formGroup]="signUpForm">
+            <div class="sign_up__form-row">
+                <input class="sign_up__form-input" type="text" placeholder="Login" formControlName="login">
+                @if (login.invalid && (login.dirty || login.touched)) {
+                <div class="alert alert-danger">
+                    @if (login.hasError('required')) {
+                    <div>Name is required.</div>
+                    }
+                    @if (login.hasError('minlength')) {
+                    <div>Name must be at least 4 characters long.</div>
+                    }
+                </div>
+                }
+            </div>
+            <div class="sign_up__form-row">
+                <input class="sign_up__form-input" type="password" placeholder="Password" formControlName="password">
+            </div>
+            <button class="sign_up__form-btn" type="button" (click)="signUp($event)">Sign up</button>
+        </form>
+
+        <div class="sign_up__menu">
+            <a class="sign_up__menu-link" routerLink="/sign-in">
+                → Sign in
+            </a>
+            <a class="sign_up__menu-link" routerLink="/">
+                → Home
+            </a>
+        </div>
+    </div>
+</div>

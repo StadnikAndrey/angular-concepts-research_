@@ -1,0 +1,15 @@
+<div class="notification__bell">
+    🔔 @if (notificationStore.numberNotifications() > 0) {
+    <span class="notification__badge">{{ notificationStore.numberNotifications() }}</span>
+    }
+</div>
+
+<div class="notification__toast-container">
+    @for (toast of notificationStore.notificationList(); track toast.id; let index = $index;) {
+    <div class="notification__toast" [class]="toast.type">         
+        {{ toast.date }}
+        {{ toast.message }}
+        <button (click)="notificationStore.deleteNotification(toast.id)">×</button>
+    </div>
+    }
+</div>

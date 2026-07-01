@@ -1,0 +1,129 @@
+.dedicated-tariff {
+    padding: 25px 0;
+    &__title {
+        font-size: 25px;
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+    &__content {
+        display: flex;
+        gap: 25px;
+    }
+    &__data {
+        flex: 1;
+        padding-top: 10px;
+    }
+    &__data-item {
+        display: flex;
+        gap: 5px;
+        padding-bottom: 10px;
+        margin-bottom: 15px;
+        & select,
+        input {
+            width: 100%;
+            border: 1px solid #f2f2f2;
+            background-color: #f2f2f2;
+        }
+        border-bottom: 2px solid #f2f2f2;
+    }
+    &__data-name {
+        width: 25%;
+        font-weight: bolder;
+    }
+    &__data-value {
+        flex: 1;
+    }
+    &__disk-wrap {
+        margin-bottom: 15px;
+    }
+    &__ext-board {
+        margin-bottom: 15px;
+    }
+    &__ext-board-disk {
+        padding-left: 20px;
+        margin-top: 5px;
+    }
+    &__software {
+        margin-top: 25px;
+    }
+    &__software-title {
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+    &__software-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    &__software-action {
+        width: 25%;
+        text-align: left;
+    }
+    &__software-name {
+        flex: 1;
+    }
+    &__software-price {
+        width: 150px;
+    }
+    &__order {
+        width: 40%;
+    }
+    &__order-inner {
+        position: sticky;
+        top: 10px;
+        background-color: #f2f2f2;
+        padding: 10px;
+    }
+    &__order-title {
+        margin-bottom: 20px;
+    }
+    &__order-name {
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+    &__order-item {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 10px;
+    }
+    &__order-item-name {
+        width: 250px;
+        font-weight: 400;
+    }
+    &__order-item-price {
+        font-size: 12px;
+        color: green;
+    }
+    &__order-group {
+        border-bottom: 2px solid #fff;
+        margin-bottom: 20px;
+    }
+    &__order-item-value {
+        font-weight: bold;
+        flex: 1;
+    }
+    &__order-ext-board {
+        margin-bottom: 10px;
+    }
+    &__order-ext-board-disks {
+        font-weight: 400;
+    }
+    &__order-price {
+        color: green;
+        font-size: 20px;
+    }
+    &__order-btn {
+        display: block;
+        margin-top: 20px;
+        width: 100%;
+        background-color: #79a4e8;
+        color: #fcfefa;
+        font-weight: bold;
+        padding: 8px 15px;
+    }
+    &__old-price {
+        font-weight: 100;
+        text-decoration: line-through;
+        text-decoration-color: #bab9b9;
+    }
+}

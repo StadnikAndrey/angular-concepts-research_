@@ -1,0 +1,28 @@
+{
+  "name": "backend-angular-concepts-research",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "atob": "^2.1.2",
+    "btoa": "^1.2.1",
+    "crypto": "^1.0.1",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "hash.js": "^1.1.7",
+    "mysql2": "^3.17.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
+}

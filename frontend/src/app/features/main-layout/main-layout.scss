@@ -1,0 +1,45 @@
+.main-layout {
+    &__wrap {
+        background-color: #fff;
+    }
+    &__main {
+        border: 1px solid green;
+        display: flex;
+        min-height: 100vh;
+    }
+    &__aside {
+        border-right: 2px solid oklch(69.02% 0.277 332.77);
+        width: 450px;
+    }
+    &__aside-inner {
+        padding: 10px;
+    }
+    &__aside-header {
+        margin-bottom: 15px;
+    }
+    &__aside-logo {
+        font-weight: bold;
+    }
+    &__menu-link {
+        display: block;
+        width: fit-content;
+        padding: 5px 0;
+        &--activ {
+            color: blueviolet;
+        }
+    }
+    &__content {
+        border: 1px solid blue;
+        flex: 1;
+    }
+    &__content-inner {
+        padding: 10px;
+    }
+    &__content-header {
+        margin-bottom: 15px;
+        display: flex;
+        justify-content: end;
+        align-items: center;
+        gap: 20px;
+    }
+}

@@ -1,0 +1,560 @@
+@if(isLoading() == true){
+<div>Loading...</div>
+}@else {
+@if (data() != null){
+<section class="dedicated-tariff">
+    <div class="content">
+        <h1 class="dedicated-tariff__title">
+            Dedicated server
+            <span>{{ data().server.name }} ({{ data().server.dc_name }})</span>
+        </h1>
+        <div class="dedicated-tariff__content">
+            <div class="dedicated-tariff__data">
+
+                <div class="dedicated-tariff__data-item">
+                    <div class="dedicated-tariff__data-name">
+                        Chassis:
+                    </div>
+                    <div class="dedicated-tariff__data-value">
+                        <span>{{ data().server.CPU }}, {{ data().server.description }}</span>
+
+                        @if(payForYear()){
+                        <p class="dedicated-tariff__old-price">
+                            ({{ data().server.currency_symbol }}{{ totalPriceChassis().month }} / month)
+                        </p>
+                        }
+                        <p>({{ data().server.currency_symbol }}{{ totalPriceChassis().total }} / month )</p>
+                    </div>
+                </div>
+
+                @if(data().cpu != undefined){
+                <div class="dedicated-tariff__data-item">
+                    <div class="dedicated-tariff__data-name">
+                        CPU:
+                    </div>
+                    <div class="dedicated-tariff__data-value">
+                        <select (change)="setCpuModel($event)">
+                            @for (el of data().cpu.cpuCanBeInstall; track el.id){
+                            <option [value]="el.id" [selected]="el.id == data().cpu.partId">{{el.description}}</option>
+                            }
+                        </select>
+
+                        <p>number of CPUs</p>
+                        <p>X{{ data().cpu.cpuInstallNumber }}</p>
+                        <input type="range" [min]="data().cpu.cpuMinNumber" [max]="data().cpu.cpuMaxNumber" step="1"
+                            [value]="data().cpu.cpuInstallNumber" (input)="setCpuNumber($event)">
+
+                        @if(payForYear()){
+                        <p class="dedicated-tariff__old-price">
+                            ({{ data().server.currency_symbol }}{{ totalPriceCPU().month }} / month )
+                        </p>
+                        }
+                        <p>({{ data().server.currency_symbol }}{{ totalPriceCPU().total }} / month )</p>
+                    </div>
+                </div>
+                }
+
+                <div class="dedicated-tariff__data-item">
+                    <div class="dedicated-tariff__data-name">
+                        RAM:
+                    </div>
+                    <div class="dedicated-tariff__data-value">
+                        <p>{{ data().ram?.value }} {{ data().ram?.part.class_desc.params.units }}</p>
+
+                        <input type="range" [min]="data().ram.min" [max]="data().ram.max" [step]="data().ram.min"
+                            [value]="data().ram?.value" (input)="setRam($event)">
+
+                        @if(payForYear()){
+                        <p class="dedicated-tariff__old-price">
+                            ({{ data().server.currency_symbol }}{{ totalPriceRam().month }} / month )
+                        </p>
+                        }
+                        <p>({{ data().server.currency_symbol }}{{ totalPriceRam().total }} / month )</p>
+                    </div>
+                </div>
+
+                <div class="dedicated-tariff__data-item">
+                    <div class="dedicated-tariff__data-name">
+                        DISKS:
+                    </div>
+                    <div class="dedicated-tariff__data-value">
+                        @for (slot of data().drives?.drivesSlots; track slot.key; let index = $index){
+                        <div class="dedicated-tariff__disk-wrap">
+                            <p>{{ slot.type == 'M.2' ? 'NVMe' : slot.type }}:</p>
+
+                            <select (change)="setDrives($event,  index, slot.type)">
+                                <option value="null">-</option>
+                                @for (item of slot.canBeInstall; track item.id){
+                                @if(item.available){
+                                <option [value]="item.id" [selected]="item.id == slot.part_id">
+                                    {{ item.description }}
+                                </option>
+                                }
+                                }
+                            </select>
+
+                            @if(slot.total_price > 0){
+                            <p [class]="this.payForYear() ? 'dedicated-tariff__old-price' : ''">
+                                ({{ data().server.currency_symbol }}{{ slot.total_price }} / month )
+                            </p>
+                            @if(payForYear()){
+                            <p>({{ data().server.currency_symbol }}{{ slot.total_price12 }} / month )</p>
+                            }
+                            }
+                        </div>
+                        }
+                    </div>
+                </div>
+
+                @if(data().bus.slots != undefined){
+                <div class="dedicated-tariff__data-item">
+                    <div class="dedicated-tariff__data-name">
+                        Extension board:
+                    </div>
+                    <div class="dedicated-tariff__data-value">
+                        @for(slot of data().bus.slots; track slot.key; let indexBusSlot = $index;){
+                        <div class="dedicated-tariff__ext-board">
+                            <div>
+                                <select (change)="setBus($event, indexBusSlot)">
+                                    <option value="null">-</option>
+                                    @for(board of slot.boards; track board.id){
+                                    <option [value]="board.id" [selected]="board.id == slot.part_id">
+                                        {{board.description}}
+                                    </option>
+                                    }
+                                </select>
+                                @if(slot.total_price > 0){
+                                <div>
+                                    <p [class]="payForYear() ? 'dedicated-tariff__old-price' : '' ">
+                                        ({{ data().server.currency_symbol }}{{slot.total_price}} / month )
+                                    </p>
+                                    @if(payForYear()){
+                                    <p>{{ data().server.currency_symbol }}{{slot.total_price12}} / month </p>
+                                    }
+                                </div>
+                                }
+                            </div>
+                            @if(slot.part_id != null){
+                            @for(driveSlot of slot.boards[slot.selectedBusIndex].driveSlots;
+                            track driveSlot.key;
+                            let indexDriveSlot = $index){
+                            <div class="dedicated-tariff__ext-board-disk">
+                                <p>{{driveSlot.type}}:</p>
+                                <select
+                                    (change)="setBusDrive($event, indexDriveSlot, indexBusSlot, slot.selectedBusIndex)">
+                                    <option value="null">-</option>
+                                    @for(drive of driveSlot.drives; track drive.id){
+                                    @if(drive.available){
+                                    <option [value]="drive.id" [selected]="drive.id == driveSlot.part_id">
+                                        {{drive.description}}
+                                    </option>
+                                    }
+                                    }
+
+                                </select>
+                                @if(driveSlot.total_price > 0){
+                                <div>
+                                    <p [class]="payForYear() ? 'dedicated-tariff__old-price' : '' ">
+                                        ({{ data().server.currency_symbol }}{{driveSlot.total_price}} / month )</p>
+                                    @if(payForYear()){
+                                    <p>{{ data().server.currency_symbol }}{{driveSlot.total_price12}} / month </p>
+                                    }
+                                </div>
+                                }
+                            </div>
+                            }
+                            }
+                        </div>
+                        }
+                    </div>
+                </div>
+                }
+
+                <div class="dedicated-tariff__data-item">
+                    <div class="dedicated-tariff__data-name">
+                        Port
+                    </div>
+                    <div class="dedicated-tariff__data-value">
+                        {{data().server.port}}
+                    </div>
+                </div>
+
+                <div class="dedicated-tariff__data-item">
+                    <div class="dedicated-tariff__data-name">
+                        Bandwidth
+                    </div>
+                    <div class="dedicated-tariff__data-value">
+                        {{data().server.traffic}}
+                    </div>
+                </div>
+
+                <div class="dedicated-tariff__data-item">
+                    <div class="dedicated-tariff__data-name">
+                        Setup time
+                    </div>
+                    <div class="dedicated-tariff__data-value">
+                        {{data().server.comment}}
+                    </div>
+                </div>
+
+                <div class="dedicated-tariff__data-item">
+                    <div class="dedicated-tariff__data-name">
+                        Location
+                    </div>
+                    <div class="dedicated-tariff__data-value">
+                        {{data().server.dc_name}}
+                    </div>
+                </div>
+
+                <div class="dedicated-tariff__data-item">
+                    <div class="dedicated-tariff__data-name">
+                        Operation system
+                    </div>
+                    <div class="dedicated-tariff__data-value">
+                        <select (change)="setOs($event)">
+                            <option value="-">(choose)</option>
+                            @for(el of data().operatingSystems; track el.value){
+                            <option [value]="el.value" [selected]="el.value == data().os">{{el.text}}</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="dedicated-tariff__data-item">
+                    <div class="dedicated-tariff__data-name">
+                        Extra IP
+                    </div>
+                    <div class="dedicated-tariff__data-value">
+                        <input type="text" value="0" (input)="setNumberIp($event)">
+                        @if(data().ip.total_price > 0){
+                        <p [class]="payForYear() ? 'dedicated-tariff__old-price' : '' ">
+                            ( {{data().server.currency_symbol}}{{data().ip.price}} / month )
+                        </p>
+                        @if(payForYear()){
+                        <p>{{data().server.currency_symbol}}{{data().ip.price12}} / month </p>
+                        }
+                        }
+                    </div>
+                </div>
+
+                <div class="dedicated-tariff__software">
+                    <h6 class="dedicated-tariff__software-title">Software:</h6>
+                    @for (el of data().soft; track el.id; let index = $index){
+                    <div class="dedicated-tariff__software-item">
+                        <div class="dedicated-tariff__software-action">
+                            <input type="checkbox" [disabled]="!el.for_os.includes(data().os)" [checked]="el.checked"
+                                (change)="setSoft($event, index)">
+                        </div>
+                        <div class="dedicated-tariff__software-name">
+                            {{el.name}}, {{el.type}}
+                        </div>
+                        <div class="dedicated-tariff__software-price">
+                            @if(el.price == 0){
+                            <div>{{el.price_title}}</div>
+                            }
+                            @if(el.price != 0){
+                            <div>
+                                <p [class]="payForYear() ? 'dedicated-tariff__old-price' : '' ">
+                                    {{data().server.currency_symbol}}{{el.price}} / month
+                                </p>
+                                @if(payForYear()){
+                                <p> {{data().server.currency_symbol}}{{el.price12m}} / month </p>
+                                }
+                            </div>
+                            }
+                        </div>
+                    </div>
+                    }
+                </div>
+
+            </div>
+
+            <div class="dedicated-tariff__order">
+                <div class="dedicated-tariff__order-inner">
+                    <h5 class="dedicated-tariff__order-title">Order</h5>
+                    <h6 class="dedicated-tariff__order-name">{{data().server.name}} ({{data().server.dc_name}})</h6>
+                    <div class="dedicated-tariff__order-group">
+                        <div class="dedicated-tariff__order-item">
+                            <div class="dedicated-tariff__order-item-name">
+                                Chassis:
+                            </div>
+                            <div class="dedicated-tariff__order-item-value">
+                                <div>{{data().server.description}}</div>
+                                <div class="dedicated-tariff__order-item-price">
+                                    @if(payForYear()){
+                                    <div class="dedicated-tariff__old-price">
+                                        ({{data().server.currency_symbol}}{{totalPriceChassis().month}} / month )
+                                    </div>
+                                    }
+                                    <div>({{data().server.currency_symbol}}{{totalPriceChassis().total}} / month )
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        @if(data().cpu != undefined){
+                        <div class="dedicated-tariff__order-item">
+                            <div class="dedicated-tariff__order-item-name">
+                                CPU:
+                            </div>
+                            <div class="dedicated-tariff__order-item-value">
+                                <div>
+                                    {{data().cpu.cpuInstallNumber}}x {{ data().cpu.cpuCanBeInstall.find((el) =>el.id ==
+                                    data().cpu.partId ).name }}
+                                </div>
+                                <div class="dedicated-tariff__order-item-price">
+                                    @if(payForYear()){
+                                    <p class="dedicated-tariff__old-price">
+                                        ({{data().server.currency_symbol}}{{totalPriceCPU().month}} / month )
+                                    </p>
+                                    }
+                                    <p>({{data().server.currency_symbol}}{{totalPriceCPU().total}} / month )</p>
+                                </div>
+                            </div>
+                        </div>
+                        }
+
+                        <div class="dedicated-tariff__order-item">
+                            <div class="dedicated-tariff__order-item-name">
+                                RAM:
+                            </div>
+                            <div class="dedicated-tariff__order-item-value">
+                                <p>{{data().ram.value}} {{data().ram.part.class_desc.params.units}}</p>
+                                <div class="dedicated-tariff__order-item-price">
+                                    @if(payForYear()){
+                                    <p class="dedicated-tariff__old-price">
+                                        ({{data().server.currency_symbol}}{{totalPriceRam().month}} / month )
+                                    </p>
+                                    }
+                                    <p>({{data().server.currency_symbol}}{{totalPriceRam().total}} / month )</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dedicated-tariff__order-item">
+                            <div class="dedicated-tariff__order-item-name">
+                                DISKS:
+                            </div>
+                            <div class="dedicated-tariff__order-item-value">
+                                @for (slot of data().drives.drivesSlots; track slot.key){
+                                <div style="margin-bottom: 4px">
+                                    <div>
+                                        {{ slot.canBeInstall.find((item) => item.id == slot.part_id)?.description }}
+                                    </div>
+                                    <div class="dedicated-tariff__order-item-price" style="padding-left: 6px">
+                                        @if(slot.total_price > 0){
+                                        <div>
+                                            <p [class]="payForYear() ? 'dedicated-tariff__old-price' : '' ">
+                                                ({{data().server.currency_symbol}}{{slot.total_price}} / month )
+                                            </p>
+                                            @if(payForYear()){
+                                            <p>{{data().server.currency_symbol}}{{slot.total_price12}} / month </p>
+                                            }
+                                        </div>
+                                        }
+                                    </div>
+                                </div>
+                                }
+                            </div>
+                        </div>
+
+                        @if(data().bus != undefined){
+                        <div class="dedicated-tariff__order-item">
+                            <div class="dedicated-tariff__order-item-name">
+                                Extension board:
+                            </div>
+                            <div class="dedicated-tariff__order-item-value">
+                                @if(!data().bus.slots.some((el) => el.part_id != null)){
+                                <div>-</div>
+                                }@else {
+                                @for(slot of data().bus.slots; track slot.key){
+                                <div class="dedicated-tariff__order-ext-board">
+                                    @if(slot.part_id != null){
+                                    <div>
+                                        <div>
+                                            {{slot.boards.find((board) =>board.id == slot.part_id)?.description}}
+                                        </div>
+                                        <div class="dedicated-tariff__order-item-price" style="padding-left: 6px">
+                                            <div>
+                                                <p [class]="payForYear() ? 'dedicated-tariff__old-price' : '' ">
+                                                    ({{data().server.currency_symbol}}{{slot.total_price}} / month )</p>
+                                                @if(payForYear()){
+                                                <p>{{data().server.currency_symbol}}{{slot.total_price12}} / month </p>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                    }
+
+                                    @if(slot.part_id != null){
+                                    @for(driveSlot of slot.boards[slot.selectedBusIndex].driveSlots; track
+                                    driveSlot.key){
+                                    <div class="dedicated-tariff__order-ext-board-disks" style="padding-left: 15px">
+                                        @if(driveSlot.part_id == null){
+                                        <p>-</p>
+                                        }@else {
+                                        <p>
+                                            {{driveSlot.drives.find((drive) =>drive.id ==
+                                            driveSlot.part_id)?.description}}
+                                        </p>
+                                        <div class="dedicated-tariff__order-item-price" style="padding-left: 6px">
+                                            @if(driveSlot.price > 0){
+                                            <div>
+                                                <p [class]="payForYear() ? 'dedicated-tariff__old-price' : '' ">
+                                                    ({{data().server.currency_symbol}}{{driveSlot.total_price}} / month
+                                                    )</p>
+                                                @if(payForYear()){
+                                                <p>{{data().server.currency_symbol}}{{driveSlot.total_price12}} / month
+                                                </p>
+                                                }
+                                            </div>
+                                            }
+                                        </div>
+                                        }
+                                    </div>
+                                    }
+                                    }
+                                </div>
+                                }
+                                }
+                            </div>
+                        </div>
+                        }
+
+                        <div class="dedicated-tariff__order-item">
+                            <div class="dedicated-tariff__order-item-name">
+                                Port:
+                            </div>
+                            <div class="dedicated-tariff__order-item-value">
+                                {{data().server.port}}
+                            </div>
+                        </div>
+
+                        <div class="dedicated-tariff__order-item">
+                            <div class="dedicated-tariff__order-item-name">
+                                Bandwidth:
+                            </div>
+                            <div class="dedicated-tariff__order-item-value">
+                                {{data().server.traffic}}
+                            </div>
+                        </div>
+
+                        <div class="dedicated-tariff__order-item">
+                            <div class="dedicated-tariff__order-item-name">
+                                Setup time:
+                            </div>
+                            <div class="dedicated-tariff__order-item-value">
+                                {{data().server.comment}}
+                            </div>
+                        </div>
+
+                        <div class="dedicated-tariff__order-item">
+                            <div class="dedicated-tariff__order-item-name">
+                                Location:
+                            </div>
+                            <div class="dedicated-tariff__order-item-value">
+                                {{data().server.dc_name}}
+                            </div>
+                        </div>
+
+                        <div class="dedicated-tariff__order-item">
+                            <div class="dedicated-tariff__order-item-name">
+                                Operation system:
+                            </div>
+                            <div class="dedicated-tariff__order-item-value">
+                                {{data().os}}
+                            </div>
+                        </div>
+
+                        <div class="dedicated-tariff__order-item">
+                            <div class="dedicated-tariff__order-item-name">
+                                server price:
+                            </div>
+                            <div class="dedicated-tariff__order-item-value">
+                                <span
+                                    class="dedicated-tariff__order-price">{{data().server.currency_symbol}}{{totalPriceServer()}}</span>
+                                / month
+                            </div>
+                        </div>
+                    </div>
+
+                    @if(data().ip.qt > 0){
+                    <div class="dedicated-tariff__order-group">
+                        <div class="dedicated-tariff__order-item">
+                            <div class="dedicated-tariff__order-item-name">
+                                Extra IP:
+                            </div>
+                            <div class="dedicated-tariff__order-item-value">
+                                <div>qt. {{data().ip.qt}} pcs.</div>
+                                <div class="dedicated-tariff__order-item-price" style=" padding-left: 6px">
+                                    <p [class]="payForYear() ? 'dedicated-tariff__old-price' : '' ">
+                                        ({{data().server.currency_symbol}}{{data().ip.price}} / month )
+                                    </p>
+                                    @if(payForYear()){
+                                    <p>{{data().server.currency_symbol}}{{data().ip.price12}} / month </p>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    }
+
+                    @for(el of data().soft; track el.id){
+                    <div>
+                        @if(el.checked === true){
+                        <div class="dedicated-tariff__order-group">
+                            <div class="dedicated-tariff__order-item">
+                                <div class="dedicated-tariff__order-item-name">
+                                    {{el.name}}, {{el.type}}
+                                </div>
+                                <div class="dedicated-tariff__order-item-value">
+                                    <div class="dedicated-tariff__software-price">
+                                        @if(el.price == 0){
+                                        <div>{{el.price_title}}</div>
+                                        }@else if (el.price != 0){
+                                        <div>
+                                            <p [class]="payForYear() ? 'dedicated-tariff__old-price' : '' ">
+                                                {{data().server.currency_symbol}}{{el.price}} / month
+                                            </p>
+                                            @if(payForYear()){
+                                            <p>{{data().server.currency_symbol}}{{el.price12m}} / month </p>
+                                            }
+                                        </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        }
+                    </div>
+                    }
+
+                    <div class="dedicated-tariff__order-item">
+                        <div class="dedicated-tariff__order-item-name">
+                            Total:
+                        </div>
+                        <div class="dedicated-tariff__order-item-value">
+                            <span class="dedicated-tariff__order-price">
+                                {{ data().server.currency_symbol }}{{ totalOrderPrice() }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label>
+                            <input type="checkbox" [(ngModel)]="payForYear" />
+                            <span>payment per year</span>
+                        </label>
+                    </div>
+
+                    <button class="dedicated-tariff__order-btn" type="button">add to cart</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+}@else {
+<div>404. Page not found.</div>
+}
+}

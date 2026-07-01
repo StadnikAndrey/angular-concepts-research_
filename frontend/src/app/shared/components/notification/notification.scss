@@ -1,0 +1,19 @@
+.notification {
+    &__toast-container {
+        position: fixed;
+        left: auto;
+        top: 40px;
+        right: 10px;
+        z-index: 2;
+    }
+    &__toast {
+        padding: 6px;
+        margin-bottom: 6px;
+        background-color: #fff;
+        border: 1px solid oklch(84.01% 0.009 308.34deg);
+        border-radius: 6px;
+        color: oklch(53.18% 0.28 296.97);
+        background-color: oklch(97.12% 0.002 325.59deg);
+        width: 320px;
+    }
+}

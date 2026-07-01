@@ -1,0 +1,37 @@
+<div class="main-layout__wrap light">
+
+    <main class="main-layout__main">
+
+        <aside class="main-layout__aside">
+            <div class="main-layout__aside-inner">
+                <div class="main-layout__aside-header">
+                    <a class="main-layout__aside-logo" routerLink="/">Angular concepts research</a>
+                </div>
+
+                <nav class="main-layout__menu">
+
+                    @for (item of menu; track item.name){
+                    <a class="main-layout__menu-link" routerLink="{{item.path}}"
+                        routerLinkActive="main-layout__menu-link--activ">
+                        {{item.name}}
+                    </a>
+                    }
+
+                </nav>
+            </div>
+        </aside>
+
+        <div class="main-layout__content">
+            <div class="main-layout__content-inner">
+                <div class="main-layout__content-header">
+                    <app-notification />
+
+                    <button type="button">&#9788;</button>
+                </div>
+
+                <router-outlet />
+            </div>
+        </div>
+
+    </main>
+</div>

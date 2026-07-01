@@ -1,0 +1,24 @@
+<div class="sign_in">
+    <div class="sign_in__inner">
+        <h1 class="sign_in__app-name">Angular concepts research</h1>
+        <h2 class="sign_in__title">Sign in</h2>
+        <form class="sign_in__form">
+            <div class="sign_in__form-row">
+                <input class="sign_in__form-input" type="text" placeholder="Login">
+            </div>
+            <div class="sign_in__form-row">
+                <input class="sign_in__form-input" type="password" placeholder="Password">
+            </div>
+            <button class="sign_in__form-btn" type="button" (click)="signIn($event)">Sign in</button>
+        </form>
+
+        <div class="sign_in__menu">
+            <a class="sign_in__menu-link" routerLink="/sign-up">
+                → Sign up
+            </a>
+            <a class="sign_in__menu-link" routerLink="/">
+                → Home
+            </a>
+        </div>
+    </div>
+</div>
