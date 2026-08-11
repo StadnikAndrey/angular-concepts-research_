@@ -24,6 +24,10 @@ export class SignUp {
     password: new FormControl('', [Validators.required, Validators.minLength(6), Validators.pattern(/[a-zA-Z0-9-_]{6, 20}/i)]),
   });
 
+  get login() {
+    return this.signUpForm.controls.login;
+  }
+
   signUp(e: any) {
     console.log(this.signUpForm.status);
     let formData = this.signUpForm.value;
