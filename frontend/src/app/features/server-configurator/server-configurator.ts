@@ -2,6 +2,9 @@ import { Component, inject, signal, computed } from '@angular/core';
 import { ServerConfiguratorApi } from './data-access/server-configurator-api';
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { switchMap, map, of, tap, catchError } from 'rxjs';
+import { toObservable } from '@angular/core/rxjs-interop';
 
 import { NotificationStore } from '../../core/store/notification-store';
 
@@ -23,23 +26,35 @@ export class ServerConfigurator {
   payForYear = signal<boolean>(false);
   dataBusInitial = signal<any>([]);
 
-  ngOnInit() {
-    this.loadData();
-  }
+  private id = toSignal(
+    this.activatedRoute.paramMap.pipe(
+      map(params => params.get('id'))
+    ),
+    { initialValue: null }
+  );
 
-  loadData() {
-    let id = this.activatedRoute.snapshot.paramMap.get('id');
-    this.apiService.getData(id).subscribe({
-      next: (data) => {
-        this.dataBusInitial.set(structuredClone(data.data.data?.bus));
-        this.data.set(data.data.data);
-        this.isLoading.set(false);
-        this.notificationStore.addNotification('Data received successfully');
-      },
-      error: (err) => {
-        console.log(err.message);
-        this.isLoading.set(false);
-        this.notificationStore.addNotification('Error receiving data');
+  constructor() {
+    toObservable(this.id).pipe(
+      switchMap(id => {
+        if (!id) return of(null);
+        this.isLoading.set(true);
+        return this.apiService.getData(id).pipe(
+          tap(response => {
+            this.dataBusInitial.set(structuredClone(response.data.data?.bus));
+            this.isLoading.set(false);
+            this.notificationStore.addNotification('Data received successfully');
+          }),
+          catchError(err => {
+            console.log(err.message);
+            this.isLoading.set(false);
+            this.notificationStore.addNotification('Error receiving data');
+            return of(null);
+          })
+        );
+      })
+    ).subscribe(response => {
+      if (response?.data?.data) {
+        this.data.set(response.data.data);
       }
     });
   }
